@@ -1,0 +1,30 @@
+{
+  "name": "module-winston-logger",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Module for winston CloudWatch logging",
+  "main": "logger.js",
+  "scripts": {
+    "test": "mocha test/ --recursive",
+    "test:coverage": "nyc --reporter=html --reporter=text --report-dir=.coverage mocha test/*test.js --recursive"
+  },
+  "keywords": [
+    "winston",
+    "logger"
+  ],
+  "dependencies": {},
+  "author": "Matthew Wheatley",
+  "license": "ISC",
+  "devDependencies": {
+    "traverse": "^0.6.6",
+    "winston": "3.1.0",
+    "chai": "^4.2.0",
+    "mocha": "^6.0.2",
+    "nyc": "^14.1.0"
+  },
+  "files": [
+    "logger.js",
+    "config/",
+    "lib/"
+  ]
+}

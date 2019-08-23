@@ -1,0 +1,21 @@
+{
+  "logger": {
+    "LOG_LEVEL": "debug",
+    "redact": {
+      "InitialFlow": {
+        "StartIVR": {
+          "message": "redact"
+        },
+        "GetCTIData": {
+        }
+      },
+      "SRS": {
+        "Start": {
+        },
+        "PINValidation": {
+          "Digit": "dev"
+        }
+      }
+    }
+  }
+}
