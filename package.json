@@ -1,8 +1,7 @@
 {
-  "name": "module-winston-logger",
+  "name": "@mawhea/module-winston-logger",
   "version": "1.0.0",
-  "private": true,
-  "description": "Module for winston CloudWatch logging",
+  "description": "Wrapper class for npm package winston to format log messages for AWS CloudWatch.",
   "main": "logger.js",
   "scripts": {
     "test": "mocha test/ --recursive",
