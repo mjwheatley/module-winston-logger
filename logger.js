@@ -1,4 +1,4 @@
-const { createLogger, format, transports } = require('winston');
+const {createLogger, format, transports} = require('winston');
 const utils = require('./lib/utils');
 /************
  *   In winston, both Logger and Transport instances are treated as objectMode streams that accept an info object.
@@ -15,12 +15,12 @@ const utils = require('./lib/utils');
  * ********************* */
 
 module.exports = class {
+    /**
+     * @param {Object} params
+     **/
     constructor(params) {
         this.metaData = params;
-        this.config = {logger:{LOG_LEVEL: "debug"}};
-        /**
-         * { 'CallId': callId, 'LambdaName': name, 'ClientId': clientId, 'DialedNumber': dialedNumber, 'ANI' : callerId, 'MDN' : phoneNumber }
-         */
+        this.config = {logger: {LOG_LEVEL: `debug`}};
 
         const ignorePrivate = format((info, opts) => {
             if (info.private) {
@@ -29,7 +29,7 @@ module.exports = class {
             return info;
         });
 
-        const enumerateErrorFormat = format(info => {
+        const enumerateErrorFormat = format((info) => {
             if (info.message instanceof Error) {
                 info.stack = info.message.stack;
                 info.message = info.message.message;
@@ -38,7 +38,7 @@ module.exports = class {
             return info;
         });
 
-        const redact = format(info => {
+        const redact = format((info) => {
             info.message = utils.redact({
                 info: info.message,
                 flow: this.metaData.Flow,
@@ -69,36 +69,64 @@ module.exports = class {
         });
     }
 
+    /**
+     * Update Config Object
+     * Sets log level
+     * @param {Object} {
+     *   {Object} config
+     * }
+     */
     updateConfig({config}) {
-        if (!config || (config && typeof config !== "object")) {
-            config = {};
+        if (!config || (config && typeof config !== `object`)) {
+            config = {logger: {LOG_LEVEL: `debug`}};
         }
         this.config = config;
-        let logLevel = "debug";
+        let logLevel = `debug`;
         if (config && config.logger && config.logger.LOG_LEVEL) {
-            logLevel = config.logger.LOG_LEVEL
+            logLevel = config.logger.LOG_LEVEL;
         }
         this.transports.console.level = logLevel;
     }
 
+    /**
+     * Add metadata by object
+     * @param {Object} data
+     */
     addMetaDataByObject(data) {
         this.metaData = Object.assign(this.metaData, data);
     }
 
+    /**
+     * add metadata by key
+     * @param {String} key
+     * @param {String} value
+     */
     addMetaDataByKey(key, value) {
         this.metaData[key] = value;
     }
 
+    /**
+     * remove metadata by key
+     * @param {String} key
+     */
     removeMetaDataByKey(key) {
         delete this.metaData[key];
     }
 
+    /**
+     * @return {Object} metadata
+     */
     getMetaData() {
         return this.metaData;
     }
 
+    /**
+     * build metadata
+     * @param {String} key
+     * @return {Object} cwLogData
+     */
     _buildLogMetaData(key) {
-        //sequencing the log data to display appropriately in CloudWatch
+        // sequencing the log data to display appropriately in CloudWatch
         let cwLogData = {
             Timestamp: new Date(),
             messageKey: key
@@ -107,20 +135,54 @@ module.exports = class {
         return cwLogData;
     }
 
-    //winstonlogger methods uses
+    /**
+     * debug level log
+     * @param {String} msgKey
+     * @param {String} message
+     */
     debug(msgKey, message) {
         this.winstonLogger.debug(message, this._buildLogMetaData(msgKey));
     }
 
+    /**
+     * warn level log
+     * @param {String} msgKey
+     * @param {String} message
+     */
     warn(msgKey, message) {
         this.winstonLogger.warn(message, this._buildLogMetaData(msgKey));
     }
 
+    /**
+     * info level log
+     * @param {String} msgKey
+     * @param {String} message
+     */
     info(msgKey, message) {
         this.winstonLogger.info(message, this._buildLogMetaData(msgKey));
     }
 
+    /**
+     * error eevel Log
+     * @param {String} msgKey
+     * @param {String} message
+     */
     error(msgKey, message) {
         this.winstonLogger.error(message, this._buildLogMetaData(msgKey));
+    }
+
+    /**
+     * Custom metric logger
+     * forces metrics to numbers
+     * @param {String} msgKey
+     * @param {String} metric
+     */
+    metric(msgKey, metric) {
+        if (isNaN(metric)) {
+            metric = 0;
+        }
+        this.addMetaDataByKey(`metric`, metric);
+        this.winstonLogger.info(metric, this._buildLogMetaData(msgKey));
+        this.removeMetaDataByKey(`metric`);
     }
 };
