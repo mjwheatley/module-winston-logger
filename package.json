@@ -1,6 +1,6 @@
 {
   "name": "@mawhea/module-winston-logger",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Module wrapper of the winston node module for formatting CloudWatch logs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "traverse": "^0.6.6",
-    "winston": "3.1.0"
+    "winston": "3.10.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.83",

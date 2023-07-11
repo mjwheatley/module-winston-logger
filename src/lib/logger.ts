@@ -33,6 +33,7 @@ export default class {
     this.config = config || JSON.parse(JSON.stringify(defaultConfig));
 
     const ignorePrivate = format((info, _opts) => {
+      //@ts-ignore
       if (info.private) {
         return false;
       }
